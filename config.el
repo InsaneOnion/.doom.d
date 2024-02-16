@@ -7,16 +7,51 @@
       display-line-numbers-type t
 
       org-directory "~/.org/"
+      org-preview-latex-image-directory "/tmp/ltximg/"
       org-ellipsis " ▼ "
+      org-noter-notes-search-path '("~/.org/braindump/org/reference/")
+      org-noter-doc-split-fraction '(0.55 0.45)
       org-download-method 'directory
       org-download-heading-lvl nil
       org-download-image-dir "./images")
 
-;; conda settings
 (setq conda-anaconda-home "~/.conda"
       conda-env-home-directory "~/.conda")
 
-(setq org-preview-latex-image-directory "/tmp/ltximg/")
+(setq org-capture-templates
+      `(("i" "Inbox" entry  (file "gtd/inbox.org")
+         ,(concat "* TODO %?\n"
+                  "/Entered on/ %U"))
+        ("s" "Slipbox" entry  (file "braindump/org/inbox.org")
+         "* %?\n")))
+
+(setq zot-bib '("~/.org/braindump/org/biblio.bib")
+      zot-pdf "~/zotfile"
+      org-literature "~/.org/braindump/org/reference")
+
+(require 'org-ref)
+(require 'org-ref-ivy)
+(use-package! ivy-bibtex
+  :init
+  (setq bibtex-completion-notes-path org-literature
+        bibtex-completion-bibliography zot-bib
+        bibtex-completion-library-path zot-pdf))
+
+(use-package! org-roam-bibtex
+  :init
+  (map! :leader
+        :prefix "nr"
+        :desc "insert an literature note link" "k" #'orb-insert-link
+        :desc "some actions for orb-note" "A" #'orb-note-actions)
+  :after org-roam
+  :hook (org-roam-mode . org-roam-bibtex-mode)
+  :custom
+  (orb-insert-interface 'ivy-bibtex)
+  (orb-insert-link-description 'citekey)
+  (orb-preformat-keywords
+   '("citekey" "title" "url" "author-or-editor" "keywords" "file"))
+  (orb-process-file-keyword t)
+  (orb-attached-file-extensions '("pdf")))
 
 (use-package! org-roam
   :init
@@ -38,18 +73,21 @@
            (file+head "reference/${title}.org" "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)
+          ("l" "literature" plain
+           "#+FILETAGS: reading research \n - tags :: %^{keywords} \n* %^{title}
+:PROPERTIES:\n:Custom_ID: %^{citekey}\n:URL: %^{url}\n:AUTHOR: %^{author-or-editor}\n:NOTER_DOCUMENT: ~/zotfile/%^{citekey}.pdf\n:NOTER_PAGE:\n:END:"
+           :target
+           (file+head "reference/${citekey}.org" "#+title: ${title}\n"))
           ("a" "article" plain "%?"
            :if-new
            (file+head "articles/${title}.org" "#+title: ${title}\n#+filetags: :article:\n")
            :immediate-finish t
-           :unnarrowed t)))
+           :unnarrowed t))
+        )
   (defun onion/tag-new-node-as-draft ()
     (org-roam-tag-add '("draft")))
   (add-hook 'org-roam-capture-new-node-hook #'onion/tag-new-node-as-draft)
   )
-
-(after! org-noter
-  org-noter-doc-split-fraction '(0.57 0.43))
 
 (after! python
   (add-hook
@@ -72,40 +110,6 @@
          (img-file-path (concat org-download-image-dir "/" (onion/extract-after-colon line))))
     (when (file-exists-p img-file-path)
       (delete-file img-file-path)
-      (kill-whole-line)))
-  )
+      (kill-whole-line))))
 
 (map! "C-c i d" #'onion/org-delete-img-and-imglink)
-
-;; (map! :leader :desc "delete both the image and the image link in the cursor line" :n "C-d" #'onion/org-delete-img-and-imglink)
-;; Whenever you reconfigure a package, make sure to wrap your config in an
-;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
-;;
-;;   (after! PACKAGE
-;;     (setq x y))
-;;
-;; The exceptions to this rule:
-;;
-;;   - Setting file/directory variables (like `org-directory')
-;;   - Setting variables which explicitly tell you to set them before their
-;;     package is loaded (see 'C-h v VARIABLE' to look up their documentation).
-;;   - Setting doom variables (which start with 'doom-' or '+').
-;;
-;; Here are some additional functions/macros that will help you configure Doom.
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;; Alternatively, use `C-h o' to look up a symbol (functions, variables, faces,
-;; etc).
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.

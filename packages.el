@@ -49,3 +49,5 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
 (package! all-the-icons)
+(package! org-roam-bibtex)
+(package! org-ref)
