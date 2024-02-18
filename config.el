@@ -13,27 +13,25 @@
       org-preview-latex-image-directory "/tmp/ltximg/"
       org-ellipsis " ▼ "
       org-noter-notes-search-path '("~/.org/braindump/org/reference/")
-      org-noter-doc-split-fraction '(0.55 0.45))
+      org-noter-doc-split-fraction '(0.55 0.45)
 
-
-(after! org-download
-  :custom
-  (setq org-download-method 'directory))
-
-
-(setq conda-anaconda-home "~/.conda"
+      conda-anaconda-home "~/.conda"
       conda-env-home-directory "~/.conda")
-
-(setq org-capture-templates
-      `(("i" "Inbox" entry  (file "gtd/inbox.org")
-         ,(concat "* TODO %?\n"
-                  "/Entered on/ %U"))
-        ("s" "Slipbox" entry  (file "braindump/org/inbox.org")
-         "* %?\n")))
+(after! org
+  (setq org-capture-templates
+        `(("i" "Inbox" entry  (file "gtd/inbox.org")
+           ,(concat "* TODO %?\n"
+                    "/Entered on/ %U"))
+          ("s" "Slipbox" entry  (file "braindump/org/inbox.org")
+           "* %?\n"))))
 
 (setq zot-bib '("~/.org/braindump/org/biblio.bib")
       zot-pdf "~/zotfile"
       org-literature "~/.org/braindump/org/reference")
+
+(after! org-download
+  :custom
+  (setq org-download-method 'directory))
 
 (require 'org-ref)
 (require 'org-ref-ivy)
