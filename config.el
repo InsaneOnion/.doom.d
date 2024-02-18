@@ -3,17 +3,23 @@
 (setq user-full-name "onion"
       user-mail-address "2100300312@mails.guet.edu.cn"
       doom-font (font-spec :family "Iosevka SS09" :size 22)
+      doom-symbol-font (font-spec :family "微软雅黑")
       doom-theme 'doom-one
       display-line-numbers-type t
 
+      org-download-image-dir "./images"
+      org-download-heading-lvl nil
       org-directory "~/.org/"
       org-preview-latex-image-directory "/tmp/ltximg/"
       org-ellipsis " ▼ "
       org-noter-notes-search-path '("~/.org/braindump/org/reference/")
-      org-noter-doc-split-fraction '(0.55 0.45)
-      org-download-method 'directory
-      org-download-heading-lvl nil
-      org-download-image-dir "./images")
+      org-noter-doc-split-fraction '(0.55 0.45))
+
+
+(after! org-download
+  :custom
+  (setq org-download-method 'directory))
+
 
 (setq conda-anaconda-home "~/.conda"
       conda-env-home-directory "~/.conda")
@@ -113,3 +119,5 @@
       (kill-whole-line))))
 
 (map! "C-c i d" #'onion/org-delete-img-and-imglink)
+
+(add-hook 'pdf-view-mode-hook 'pdf-view-fit-width-to-window)
