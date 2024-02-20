@@ -4,9 +4,10 @@
       user-mail-address "2100300312@mails.guet.edu.cn"
       doom-font (font-spec :family "Iosevka SS09" :size 22)
       doom-symbol-font (font-spec :family "微软雅黑")
-      doom-theme 'doom-one
+      doom-theme 'doom-plain-dark
       display-line-numbers-type t
 
+      org-superstar-headline-bullets-list '("✿" "✸" "◉" "⁖" "○" )
       org-download-image-dir "./images"
       org-download-heading-lvl nil
       org-directory "~/.org/"
@@ -17,6 +18,14 @@
 
       conda-anaconda-home "~/.conda"
       conda-env-home-directory "~/.conda")
+
+(setq zot-bib '("~/.org/braindump/org/biblio.bib")
+      zot-pdf "~/zotfile"
+      org-literature "~/.org/braindump/org/reference")
+
+(custom-theme-set-faces! 'doom-plain-dark
+  '(doom-dashboard-banner :foreground "gray" :weight bold))
+
 (after! org
   (setq org-capture-templates
         `(("i" "Inbox" entry  (file "gtd/inbox.org")
@@ -24,10 +33,6 @@
                     "/Entered on/ %U"))
           ("s" "Slipbox" entry  (file "braindump/org/inbox.org")
            "* %?\n"))))
-
-(setq zot-bib '("~/.org/braindump/org/biblio.bib")
-      zot-pdf "~/zotfile"
-      org-literature "~/.org/braindump/org/reference")
 
 (after! org-download
   :custom
@@ -99,6 +104,10 @@
    (lambda ()
      (setq-local python-indent-offset 2))))
 
+(after! highlight-indent-guides
+  (setq highlight-indent-guides-method 'character
+        highlight-indent-guides-auto-character-face-perc 65))
+
 (defun onion/get_current_line ()
   (buffer-substring
    (line-beginning-position)
@@ -119,3 +128,4 @@
 (map! "C-c i d" #'onion/org-delete-img-and-imglink)
 
 (add-hook 'pdf-view-mode-hook 'pdf-view-fit-width-to-window)
+

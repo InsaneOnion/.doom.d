@@ -51,3 +51,4 @@
 (package! all-the-icons)
 (package! org-roam-bibtex)
 (package! org-ref)
+(package! impatient-mode)
