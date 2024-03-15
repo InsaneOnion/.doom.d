@@ -31,7 +31,7 @@
         +fuzzy
         +icons
         +prescient)               ; a search engine for love and life
-       vertico           ; the search engine of the future
+       ;; vertico           ; the search engine of the future
 
        :ui
        ;;deft              ; notational velocity for Emacs
@@ -101,7 +101,7 @@
        direnv
        ;;docker
        ;;editorconfig      ; let someone else argue about tabs vs spaces
-       ;;ein               ; tame Jupyter notebooks with emacs
+       ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
        lookup              ; navigate your code and its documentation
        lsp               ; M-x vscode
@@ -170,6 +170,7 @@
        ;;ocaml             ; an objective camel
        (org
         +dragndrop
+        +jupyter
         +hugo
         +noter
         +pandoc

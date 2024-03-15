@@ -2,12 +2,12 @@
 
 (setq user-full-name "onion"
       user-mail-address "2100300312@mails.guet.edu.cn"
-      doom-font (font-spec :family "Iosevka SS09" :size 22)
+      doom-font (font-spec :family "Iosevka SS09" :size 20)
       doom-symbol-font (font-spec :family "微软雅黑")
-      doom-theme 'doom-plain-dark
+      doom-theme 'doom-one
       display-line-numbers-type t
 
-      org-superstar-headline-bullets-list '("✿" "✸" "◉" "⁖" "○" )
+      org-superstar-headline-bullets-list '("◉" "✿" "✸" "⁖" "○" )
       org-download-image-dir "./images"
       org-download-heading-lvl nil
       org-directory "~/.org/"
@@ -17,7 +17,9 @@
       org-noter-doc-split-fraction '(0.55 0.45)
 
       conda-anaconda-home "~/.conda"
-      conda-env-home-directory "~/.conda")
+      conda-env-home-directory "~/.conda"
+
+      leetcode-directory "~/leetcode")
 
 (setq zot-bib '("~/.org/braindump/org/biblio.bib")
       zot-pdf "~/zotfile"
@@ -37,6 +39,12 @@
 (after! org-download
   :custom
   (setq org-download-method 'directory))
+
+(require 'find-lisp)
+(setq onion/org-agenda-directory
+      (expand-file-name "gtd/" org-directory))
+(setq org-agenda-files
+      (find-lisp-find-files onion/org-agenda-directory "\.org$"))
 
 (require 'org-ref)
 (require 'org-ref-ivy)
@@ -73,13 +81,18 @@
   (setq org-roam-capture-templates
         '(("m" "main" plain
            "%?"
-           :if-new (file+head "main/${slug}.org"
-                              "#+title: ${title}\n")
+           :if-new
+           (file+head "main/${slug}.org" "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)
           ("r" "reference" plain "%?"
            :if-new
            (file+head "reference/${title}.org" "#+title: ${title}\n")
+           :immediate-finish t
+           :unnarrowed t)
+          ("p" "project" plain "%?"
+           :if-new
+           (file+head "project/${title}.org" "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)
           ("l" "literature" plain
@@ -96,13 +109,32 @@
   (defun onion/tag-new-node-as-draft ()
     (org-roam-tag-add '("draft")))
   (add-hook 'org-roam-capture-new-node-hook #'onion/tag-new-node-as-draft)
+
+  )
+
+(use-package! go-translate
+  :config
+  (setq gts-translate-list '(("en" "zh"))
+        gts-default-translator
+        (gts-translator
+         :picker
+         (gts-prompt-picker)
+         :engines
+         (list
+          (gts-google-engine)
+          (gts-bing-engine)
+          (gts-google-rpc-engine))
+         :render
+         (gts-posframe-pop-render)
+         ;; (gts-buffer-render)
+         ))
   )
 
 (after! python
   (add-hook
    'python-mode-hook
    (lambda ()
-     (setq-local python-indent-offset 2))))
+     (setq-local python-indent-offset 4))))
 
 (after! highlight-indent-guides
   (setq highlight-indent-guides-method 'character
@@ -126,6 +158,10 @@
       (kill-whole-line))))
 
 (map! "C-c i d" #'onion/org-delete-img-and-imglink)
+(map! "C-s" #'save-buffer)
+(map!
+ :leader
+ :prefix "a"
+ :desc "do translate" "s" #'gts-do-translate)
 
 (add-hook 'pdf-view-mode-hook 'pdf-view-fit-width-to-window)
-
